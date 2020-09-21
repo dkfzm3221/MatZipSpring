@@ -19,21 +19,14 @@
 	<script>
 		function chkId(){
 			const user_id = frm.user_id.value
-			if(frm.user_id.value == ''){
-				alert('아이디를 입력해주세요')
-				frm.user_id.focus()
-				return
-			}
 		
-			axios.get('/user/ajaxIdChk',{
-				params:{
-					'user_id' : user_id
-				}
+			axios.post('/user/ajaxIdChk',{
+					user_id
 			}).then(function(res){
 				console.log(res)
-				if(res.data.result == 2 ){//아이디 없음
+				if(res.data == '2'){//아이디 없음
 					idChkResult.innerText = '사용할 수 있는 아이디입니다.'			
-				}else if(res.data.result == 3){//아이디 중복
+				}else if(res.data == '3'){//아이디 중복
 					idChkResult.innerText = '이미 사용중인 아이디입니다.'
 				}
 			})

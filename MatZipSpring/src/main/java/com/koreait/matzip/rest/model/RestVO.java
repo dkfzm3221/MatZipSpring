@@ -10,8 +10,15 @@ public class RestVO {
 	private int i_user;
 	private int r_dt;
 	private int m_dt;
+	private int hits;
 	
 	
+	public int getHits() {
+		return hits;
+	}
+	public void setHits(int hits) {
+		this.hits = hits;
+	}
 	public String getNm() {
 		return nm;
 	}

@@ -16,6 +16,7 @@
 	<div id="container">
 		<header>
 			<div id="headerLeft">
+				<c:if test="${loginUser != null}">
 				<div class="containerPImg">
 					<c:choose>
 						<c:when test="${loginUser.profile_img != null}">
@@ -28,18 +29,32 @@
 				</div>
 				<div class="ml5">${loginUser.nm}님 환영합니다.</div>
 				<div class="ml10" id="headerLogout"><a href="/user/logout">로그아웃</a></div>
+				</c:if>
+				<c:if test="${loginUser == null}">
+					<div class="ml10" id="headerLogout"><a href="/user/login">로그인</a></div>
+				</c:if>
 			</div>
 			<div id="headerRight">
-				<a href="/restaurant/restMap">지도</a>
-				<a class="ml15" href="/restaurant/restReg">등록</a>
-				<a class="ml15" href="/user/restFavorite">찜</a>
+				<a href="/rest/map">지도</a>
+				<c:if test="${loginUser != null }">
+					<a class="ml15" href="/rest/restReg">등록</a>
+				</c:if>
+				<c:if test="${loginUser == null}">
+					<a class="ml15" href="#" onclick="alert('로그인이 필요합니다')">등록</a>
+				</c:if>
+				<c:if test="${loginUser != null}">
+					<a class="ml15" href="/user/restFavorite">찜</a>
+				</c:if>
+				<c:if test="${loginUser == null}">
+					<a class="ml15" href="/user/login">찜</a>
+				</c:if>
 			</div> 
 		</header>
 		<section>
 			<jsp:include page="/WEB-INF/views/${view}.jsp"></jsp:include>
 		</section>
 		<footer>
-			회사 정보
+			<span>회사 정보</span>
 		</footer>
 	</div>
 </body>

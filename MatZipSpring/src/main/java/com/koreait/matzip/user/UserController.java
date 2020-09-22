@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.koreait.matzip.Const;
-import com.koreait.matzip.SecurityUtils;
 import com.koreait.matzip.ViewRef;
 import com.koreait.matzip.user.model.UserPARAM;
 import com.koreait.matzip.user.model.UserVO;
@@ -66,7 +65,11 @@ public class UserController {
 		return "redirect:/user/login";
 
 	}
-	
+	@RequestMapping(value="/logout", method = RequestMethod.GET)
+	public String logout(HttpSession hs) {
+		hs.invalidate();
+		return "redirect:/";
+	}
 	
 	@RequestMapping(value="/join", method = RequestMethod.POST)
 	public String join(UserVO param, RedirectAttributes ra) {
@@ -85,7 +88,6 @@ public class UserController {
 		int result = service.login(param);
 		return String.valueOf(result);
 	}
-	
-	
+
 	
 }

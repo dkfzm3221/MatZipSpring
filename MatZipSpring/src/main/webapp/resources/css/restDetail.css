@@ -46,10 +46,16 @@
 }
 
 .menuList .menuItem {
-	display: inline-block;
+	position: relative;
 	width: 70px;
 	height: 70px;
-	color: white;
+	
+}
+.menuList .menuItem .delIconContainer {
+	position: absolute;
+	top: 0;
+	right: 0;
+	
 }
 
 .menuList .menuItem:not(:first-child) {
@@ -77,3 +83,6 @@
 .restaurant-detail {
 	padding: 5px 0 10px 0;
 }
+
+
+

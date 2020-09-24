@@ -13,17 +13,17 @@ public class LoginCheckInterceptor extends HandlerInterceptorAdapter{
 	public boolean preHandle(HttpServletRequest request,
 			HttpServletResponse response, Object handler) throws Exception{
 		
-		System.out.println("인터셉터~!");
-		
 		
 		String uri = request.getRequestURI();
+		System.out.println("uri : " + uri);
 		String[] uriArr = uri.split("/");
 		
-		if(uriArr[1].equals("res")) { //리소스(js, css, img)
+		if(uri.equals("/")) {
 			return true;
-		}else if(uriArr.length < 3) { //주소가 이상한 경우
-			return false;
+		}else if(uriArr[1].equals("res")) { //리소스(js, css, img)
+			return true;
 		}
+		
 		System.out.println("인터셉터~!");
 		boolean isLogout = SecurityUtils.isLogout(request);
 		

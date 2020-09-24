@@ -12,10 +12,13 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import com.koreait.matzip.CommonUtils;
+import com.koreait.matzip.Const;
 import com.koreait.matzip.FileUtils;
+import com.koreait.matzip.SecurityUtils;
 import com.koreait.matzip.model.CodeVO;
 import com.koreait.matzip.model.CommonMapper;
 import com.koreait.matzip.rest.model.RestDMI;
+import com.koreait.matzip.rest.model.RestFile;
 import com.koreait.matzip.rest.model.RestPARAM;
 import com.koreait.matzip.rest.model.RestRecMenuVO;
 
@@ -63,14 +66,19 @@ public class RestService {
 	}
 
 	public int insRecMenus(MultipartHttpServletRequest mReq) {
-
+		int i_user = SecurityUtils.getLoginUserPk(mReq.getSession());
 		int i_rest = Integer.parseInt(mReq.getParameter("i_rest"));
+		if(_authFail(i_rest, i_user)) {
+			return Const.FAIL; // 장난질 금지 
+		}
+		
+		
 		List<MultipartFile> fileList = mReq.getFiles("menu_pic");
 		String[] menuNmArr = mReq.getParameterValues("menu_nm");
 		String[] menuPriceArr = mReq.getParameterValues("menu_price");
 
 		// 저장위치
-		String path = mReq.getServletContext().getRealPath("/resources/img/rest/" + i_rest + "/rec_menu/");
+		String path = Const.realPath + "/resources/img/rest/" + i_rest + "/rec_menu/";
 		List<RestRecMenuVO> list = new ArrayList();
 
 		for (int i = 0; i < menuNmArr.length; i++) {
@@ -107,13 +115,18 @@ public class RestService {
 
 		return i_rest;
 	}
+	
+	
+	
+	
+	
 	public int delRecMenu(RestPARAM param, String realPath) {
 		//파일 삭제
 		List<RestRecMenuVO> list = mapper.selRestRecMenus(param);
 		if(list.size() == 1) {
 			RestRecMenuVO item = list.get(0);
 			
-			if(!item.getMenu_pic().equals("")) { //이미지 있음 > 삭제
+			if(item.getMenu_pic() != null && !item.getMenu_pic().equals("")) { //이미지 있음 > 삭제
 				File file = new File(realPath + item.getMenu_pic());
 				if(file.exists()) {
 					if(file.delete()) {
@@ -132,6 +145,47 @@ public class RestService {
 	public List<RestRecMenuVO> selRestRecMenus(RestPARAM param){
 		return mapper.selRestRecMenus(param);
 	}
+
+	public int insRestMenu(RestFile param, int i_user) {
+		if(_authFail(param.getI_rest(), i_user)) {
+			return Const.FAIL;
+		}
+		
+		String path = Const.realPath + "/resources/img/rest/" + param.getI_rest() + "/menu/";
+		
+		List<RestRecMenuVO> list = new ArrayList();
+		
+		for(MultipartFile mf : param.getMenu_pic()) {
+			RestRecMenuVO vo = new RestRecMenuVO();
+			list.add(vo);
+			
+			String saveFileNm = FileUtils.saveFile(path, mf);
+			vo.setMenu_pic(saveFileNm);
+			vo.setI_rest(param.getI_rest());
+			
+		}
+		for(RestRecMenuVO vo : list) {
+			mapper.insRestMenu(vo);
+		}
+		return Const.SUCCESS;
+	}
 	
+	
+	
+	private boolean _authFail(int i_rest, int i_user) {
+		RestPARAM param = new RestPARAM();
+		param.setI_rest(i_rest);
+		
+		RestDMI dbResult = mapper.selRest(param);
+		if(dbResult == null || dbResult.getI_user() != i_user) {
+			return true;
+		}
+		return false;
+	}
+	
+	public List<RestRecMenuVO> selRestMenus(RestPARAM param){
+		return mapper.selRestMenus(param);
+	}
 
 }
+

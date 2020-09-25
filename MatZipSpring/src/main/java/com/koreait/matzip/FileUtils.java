@@ -36,7 +36,15 @@ public class FileUtils {
 		return saveFileNm;
 	}
 	
-	
+	public static boolean delfile(String path) {
+		File file = new File(path);
+		if(file.exists()) {
+			System.out.println("존재 ㅇㅇ");
+			return file.delete();
+		}
+		System.out.println("존재 ㄴㄴ");
+		return false;
+	}
 	
 	
 	

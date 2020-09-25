@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -21,6 +20,7 @@ import com.koreait.matzip.ViewRef;
 import com.koreait.matzip.rest.model.RestDMI;
 import com.koreait.matzip.rest.model.RestFile;
 import com.koreait.matzip.rest.model.RestPARAM;
+import com.koreait.matzip.rest.model.RestRecMenuVO;
 
 @Controller
 @RequestMapping("/rest")
@@ -46,7 +46,7 @@ public class RestController {
 		return service.selRestList(param);
 	}
 
-	@RequestMapping(value = "/restReg", method = RequestMethod.GET)
+	@RequestMapping(value = "/reg", method = RequestMethod.GET)
 	public String restReg(Model model) {
 		model.addAttribute("categoryList", service.selCategoryList());
 
@@ -69,15 +69,19 @@ public class RestController {
 
 		RestDMI data = service.selRest(param);
 		
-		model.addAttribute("menuList", service.selRestMenus(param));
+//		model.addAttribute("menuList", service.selRestMenus(param));
 		model.addAttribute("recMenuList", service.selRestRecMenus(param));
-		model.addAttribute("css", new String[] {"restDetail"});
+		model.addAttribute("css", new String[] {"restDetail", "swiper-bundle.min"});
 		model.addAttribute(Const.TITLE, data.getNm());
 		model.addAttribute(Const.VIEW, "rest/restDetail");
 		model.addAttribute("data", data);
 		return ViewRef.TEMP_MENU_TEMP;
-		
-		
+	}
+	
+	@RequestMapping("/ajaxSelMenuList")
+	@ResponseBody
+	public List<RestRecMenuVO> ajaxSelMenuList(RestPARAM param){
+		return service.selRestMenus(param);
 	}
 
 	@RequestMapping("/del")
@@ -109,7 +113,12 @@ public class RestController {
 		String path = "/resources/img/rest/" + param.getI_rest() + "/rec_menu/";
 		String realPath = hs.getServletContext().getRealPath(path); 
 		param.setI_user(SecurityUtils.getLoginUserPk(hs)); //로그인 유저 pk 담기
-		return service.delRecMenu(param, realPath);
+		return service.delRestRecMenu(param, realPath);
+	}
+	
+	@RequestMapping("/ajaxDelMenu")
+	@ResponseBody public int ajaxDelMenu(RestPARAM param) { //i_rest, seq, menu_pic 체크
+		return service.delRestMenu(param);
 	}
 	
 	@RequestMapping("/menus")
@@ -120,15 +129,6 @@ public class RestController {
 		ra.addAttribute("i_rest", param.getI_rest());
 		return "redirect:/rest/detail";
 	}
-	
-	
-	
-	
-	
 
-	
-	
-	
-	
 
 }

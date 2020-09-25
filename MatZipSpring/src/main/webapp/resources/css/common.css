@@ -10,9 +10,18 @@ html, body {
 	width: 100%;
 	height: 100%;
 }
+
 a {
-	color : black;
-	text-decoration : none;
+	color: black;
+	text-decoration: none;
+}
+
+.ml5 { margin-left: 5px; }
+.ml10 { margin-left: 10px; }
+.ml15 { margin-left: 15px; }
+
+.bg_black {
+	background-color: #000;
 }
 
 #container {
@@ -22,43 +31,39 @@ a {
 	height: 100%;
 }
 
-#container > header {
-	padding: 10px;
+#container > header {	
 	background-color: #a29bfe;
-	display : flex;
+	display: flex;
 	height: 70px;
+	padding: 10px;
+}
+
+#container > header > #headerLeft {
+	flex-grow: 1;
 	display: flex;
 	align-items: center;
 }
-#container > header > #headerLeft{
-	flex-grow:1;
-	display : flex;
-	align-items:center;
-	
+
+#container > header > #headerLeft > #headerLogout > a {
+	color: blue;
 }
 
-
-#container > header > #headerLeft > #headerLogout{
-	color : blue;
-	
+#container > header > #headerRight {
+	padding-right: 50px;
+	display: flex;
+	justify-content: flex-end;
+	align-items: center;
+	flex-grow: 1;
 }
 
-#container > header > #headerRight{
-	padding-right : 20px;
-	display : flex;
-	justify-content : flex-end;
-	align-items:center;
-	flex-grow:1;
-}
-
-#container > header > #headerRight > a{
+#container > header > #headerRight > a {
 	font-weight: bold;
-	font-size :1.4em;
+	font-size: 1.4em;
 }
-
 
 #container > section {
 	flex-grow: 1;
+	overflow: auto;
 }
 
 #container > footer {
@@ -86,27 +91,19 @@ a {
 
 .msg { color: red; }
 
-.headerLeft {
-		display: flex;
-		align-items: center;
+ .containerPImg {
+	display: inline-block;	
+	width: 30px;
+	height: 30px;
+    border-radius: 50%;
+    overflow: hidden;
 }
-.containerPImg {
-		display: inline-block;
-		width: 30px;
-		height: 30px;
-	    border-radius: 50%;
-	    overflow: hidden;
-	    margin-right : 5px;
-	}
 
-.ml5{margin-left:5px}
-.ml10{margin-left:10px}
-.ml15{margin-left:15px}
-
-
-
-
-
+.pImg {
+	object-fit: cover;
+	height: 100%;
+	width: 100%;
+}
 
 
 

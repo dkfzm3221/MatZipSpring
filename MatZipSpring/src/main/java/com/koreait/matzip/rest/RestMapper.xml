@@ -91,14 +91,12 @@
 			AND A.seq = #{seq}
 		</if>
 	</delete>
+
 	<delete id="delRestMenu" parameterType="RestPARAM">
-		DELETE A FROM t_restaurant_menu A
-		INNER JOIN t_restaurant B
-		ON A.i_rest = B.i_rest
-		WHERE B.i_rest = #{i_rest}
-		AND B.i_user = #{i_user}
+		DELETE FROM t_restaurant_menu
+		WHERE i_rest = #{i_rest}
 		<if test="seq > 0">
-			AND A.seq = #{seq}
+			and seq = #{seq}
 		</if>
 	</delete>
 	<delete id="delRest" parameterType="RestPARAM">
@@ -106,22 +104,5 @@
 		WHERE i_rest = #{i_rest}
 		AND i_user = #{i_user}
 	</delete>
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+
 </mapper>

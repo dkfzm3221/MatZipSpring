@@ -75,7 +75,15 @@
 			
 			var centerSpan = document.createElement('span')
 			centerSpan.className = 'center'
-			centerSpan.innerText = item.nm
+			
+			var restNm = item.nm
+			if(item.is_favorite == 1){
+				restNm += '💘'
+			}
+			
+			centerSpan.innerText = restNm
+			
+			
 			
 			content.appendChild(leftSpan)
 			content.appendChild(centerSpan)
@@ -102,7 +110,7 @@
 			markerList.push(marker)
 		}
 		
-		function moveToDetail(i_rest){
+		function moveToDetail(i_rest) {
 			location.href = '/rest/detail?i_rest=' + i_rest
 		}
 		

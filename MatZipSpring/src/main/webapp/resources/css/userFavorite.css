@@ -1,0 +1,24 @@
+@charset "UTF-8";
+.container {
+	width: 1200px;
+	height:1000px;
+	margin: 0 auto;
+	position:relative;
+}
+.f-item{
+	width:100px;
+	heighit: 300px;
+	display:flex;
+}
+.f-item .img{
+	width:300px;
+	background-color:black;
+	
+},
+.f-item .ctnt{
+	flex-grow: 1;
+	background-color:pink;
+}
+.f-item:not(first-child){
+	margin-top:30px;
+}

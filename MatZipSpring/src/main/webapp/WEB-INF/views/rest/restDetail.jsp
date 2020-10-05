@@ -13,7 +13,7 @@
 		<c:forEach items="${recMenuList}" var="item">
 			<div class="recMenuItem" id="recMenuItem_${item.seq}">
 				<div class="pic">
-					<c:if test="${item.menu_pic != null and item.menu_pic != ''}">
+					<c:if test="${item.menu_pic != null && item.menu_pic != ''}">
 						<img src="/res/img/rest/${data.i_rest}/rec_menu/${item.menu_pic}">
 					</c:if>
 				</div>

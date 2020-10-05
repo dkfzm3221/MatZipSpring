@@ -1,6 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
- <style>
+    <style>
 	    .label {margin-bottom: 96px;}
 		.label * {display: inline-block;vertical-align: top;}
 		.label .left {background: url("https://t1.daumcdn.net/localimg/localimages/07/2011/map/storeview/tip_l.png") no-repeat;display: inline-block;height: 24px;overflow: hidden;vertical-align: top;width: 7px;}
@@ -11,24 +11,22 @@
 <div id="sectionContainerCenter">
 	<div id="mapContainer" style="width:100%; height:100%;"></div>
 	
-	<script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=249fd926a9b341971398e3cab160d42b"></script>
+	<script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=1ab3d71d45b40c5eaec83805c9a73569"></script>
 	<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-	<script>
-		
+	<script>		
+	
 		var markerList = [] //마커 리스트
-		
 		
 		const options = { //지도를 생성할 때 필요한 기본 옵션
 			center: new kakao.maps.LatLng(35.958437, 128.486084), //지도의 중심좌표.
 			level: 5 //지도의 레벨(확대, 축소 정도)
-		};
+		}
 	
 		const map = new kakao.maps.Map(mapContainer, options);
 		
-
 		function getRestaurantList() {
-			//마커 지우기
-			markerList.forEach(function(marker){
+			//마커 모두 지우기
+			markerList.forEach(function(marker) {
 				marker.setMap(null)
 			})
 			
@@ -42,14 +40,11 @@
 			const sw_lat = southWest.getLat()
 			const sw_lng = southWest.getLng()
 			const ne_lat = northEast.getLat()
-			const ne_lng = northEast.getLng()
+			const ne_lng = northEast.getLng()			
 			
-			axios.get('/rest/ajaxGetList',{
-				params:{
-					sw_lat,
-	                sw_lng,
-	                ne_lat,
-	                ne_lng
+			axios.get('/rest/ajaxGetList', {
+				params: {
+					sw_lat, sw_lng, ne_lat, ne_lng
 				}
 			}).then(function(res) {
 				console.log(res.data)
@@ -59,11 +54,11 @@
 				})
 			})		
 		}
-		kakao.maps.event.addListener(map, 'tilesloaded', getRestaurantList)
 		
+		kakao.maps.event.addListener(map, 'tilesloaded', getRestaurantList)   
 		
 		//마커생성
-		function createMarker(item) {
+		function createMarker(item) {			
 			var content = document.createElement('div')
 			content.className = 'label'
 			
@@ -76,37 +71,29 @@
 			var centerSpan = document.createElement('span')
 			centerSpan.className = 'center'
 			
-			var restNm = item.nm
-			if(item.is_favorite == 1){
-				restNm += '💘'
+			var restNm = item.nm			
+			if(item.is_favorite == 1) {
+				restNm += ' ♥'
 			}
 			
 			centerSpan.innerText = restNm
 			
-			
-			
 			content.appendChild(leftSpan)
 			content.appendChild(centerSpan)
-			content.appendChild(rightSpan)
-			
+			content.appendChild(rightSpan)			
 			//var content = `<div class ="label"><span class="left"></span><span class="center">\${item.nm}</span><span class="right"></span></div>`
-			var mPos = new kakao.maps.LatLng(item.lat, item.lng)
-			
+			var mPos = new kakao.maps.LatLng(item.lat, item.lng)			
 			var marker = new kakao.maps.CustomOverlay({
 			    position: mPos,
 			    content: content
-			});
-			// 마커에 클릭이벤트 등록
-		//	kakao.maps.event.addListener(marker, 'click', function() {
-		//		console.log('마커 클릭: ' + item.i_rest) //소멸되지 않고 남아있음 클로저?
-
-		//	});
-			addEvent(content, 'click', function(){
-				console.log('마커 클릭 : ' + item.i_rest)
-				moveToDetail(item.i_rest);
+			});			
+			addEvent(content, 'click', function() {
+				console.log('마커 클릭: ' + item.i_rest)
+				moveToDetail(item.i_rest)
 			})
 			
 			marker.setMap(map)
+			
 			markerList.push(marker)
 		}
 		
@@ -115,13 +102,12 @@
 		}
 		
 		function addEvent(target, type, callback) {
-			if(target.addEventListener){
-				target.addEventListener(type, callback);
-			}else{
-				target.attachEvent('on' + type, callback);
-			}
-		}
-		
+			if (target.addEventListener) {
+			    target.addEventListener(type, callback);
+		    } else {
+		        target.attachEvent('on' + type, callback);
+		    }
+		}		
 		
 		// check for Geolocation support
 		if (navigator.geolocation) {

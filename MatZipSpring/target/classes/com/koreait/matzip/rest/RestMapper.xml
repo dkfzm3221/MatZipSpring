@@ -1,11 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.koreait.matzip.rest.RestMapper">
-	<insert id="insRest" parameterType="RestPARAM"> 
-		INSERT INTO t_restaurant 
+
+	<insert id="insRest" parameterType="RestPARAM">
+		INSERT INTO t_restaurant
 		(nm, addr, lat, lng, cd_category, i_user)
 		VALUES
 		(#{nm}, #{addr}, #{lat}, #{lng}, #{cd_category}, #{i_user})
+	</insert>
+	
+	<insert id="insRestRecMenu" parameterType="RestRecMenuVO">
+		INSERT INTO t_restaurant_recommend_menu
+		(i_rest, seq, menu_nm, menu_price, menu_pic)
+		SELECT #{i_rest}, ifnull(max(seq), 0) + 1, #{menu_nm}, #{menu_price}, #{menu_pic}
+		FROM t_restaurant_recommend_menu
+		WHERE i_rest = #{i_rest}
 	</insert>
 	
 	<insert id="insRestMenu" parameterType="RestRecMenuVO">
@@ -16,49 +25,41 @@
 		WHERE i_rest = #{i_rest}
 	</insert>
 	
-	<insert id="insRestRecMenu" parameterType = "RestRecMenuVO">
-		INSERT INTO t_restaurant_recommend_menu
-		(i_rest, seq, menu_nm, menu_price, menu_pic)
-		SELECT #{i_rest}, IFNULL(max(seq), 0) + 1, #{menu_nm}, #{menu_price}, #{menu_pic}
-		FROM t_restaurant_recommend_menu
-		WHERE i_rest = #{i_rest}
-	</insert>
-	
 	<select id="selRestChkUser" resultType="Integer" parameterType="Integer">
-		SELECT i_user FROM t_restaurant
+		SELECT i_user FROM t_restaurant 
 		WHERE i_rest = #{i_rest}
 	</select>
 	
 	<select id="selRestList" parameterType="RestPARAM" resultType="RestDMI">
-			SELECT A.i_rest, A.nm, A.lat, A.lng
-			<if test="i_user > 0">
-				, CASE WHEN B.i_rest IS NULL THEN 0 ELSE 1 END AS is_favorite
-			</if>
-			FROM t_restaurant A
-			<if test="i_user > 0">
-				LEFT JOIN t_user_favorite B
-				ON A.i_rest = B.i_rest
-				AND B.i_user = #{i_user}
-			</if>
-			WHERE A.lat BETWEEN #{sw_lat} AND #{ne_lat}
-			AND A.lng BETWEEN #{sw_lng} AND #{ne_lng}	
+		SELECT A.i_rest, A.nm, A.lat, A.lng
+		<if test="i_user > 0">
+			, CASE WHEN B.i_rest IS NULL THEN 0 ELSE 1 END AS is_favorite
+		</if>
+		FROM t_restaurant A
+		<if test="i_user > 0">
+			LEFT JOIN t_user_favorite B
+			ON A.i_rest = B.i_rest
+			AND B.i_user = #{i_user}
+		</if>
+		WHERE A.lat BETWEEN #{sw_lat} AND #{ne_lat}
+		AND A.lng BETWEEN #{sw_lng} AND #{ne_lng}
 	</select>
 	
 	<select id="selRest" parameterType="RestPARAM" resultType="RestDMI">
-		SELECT
+		SELECT 
 			A.i_rest, A.nm, A.lat, A.lng, A.addr, A.i_user, A.hits
-			, IFNULL(B.val, '') as cd_category_nm
+			, ifnull(B.val, '') as cd_category_nm
 			, C.nm as user_nm
-			, IFNULL(D.cnt, 0) as cnt_favorite
-			, CASE WHEN E.i_rest IS NULL then 0 else 1 END AS is_favorite
+			, ifnull(D.cnt, 0) as cnt_favorite
+			, CASE WHEN E.i_rest IS NULL THEN 0 ELSE 1 END AS is_favorite
 		FROM t_restaurant A
-		INNER JOIN c_code_d B
+		LEFT JOIN c_code_d B
 			ON A.cd_category = B.cd
 			AND B.i_m = 1
 		LEFT JOIN t_user C
 			ON A.i_user = C.i_user
-		LEFT JOIN(
-			SELECT i_rest, COUNT(i_rest) as cnt
+		LEFT JOIN (
+			SELECT i_rest, COUNT(i_rest) as cnt 
 			FROM t_user_favorite
 			WHERE i_rest = #{i_rest}
 			GROUP BY i_rest
@@ -67,17 +68,12 @@
 		LEFT JOIN t_user_favorite E
 			ON A.i_rest = E.i_rest
 			AND E.i_user = #{i_user}
-		WHERE A.i_rest = #{i_rest};
+		WHERE A.i_rest = #{i_rest}
 	</select>
 	
-	<select id="selRestRecMenus" parameterType="RestRecMenuVO" resultType="RestRecMenuVO">
+	<select id="selRestRecMenus" parameterType="RestPARAM" resultType="RestRecMenuVO">
 		SELECT A.seq, A.menu_nm, A.menu_price, A.menu_pic
 		FROM t_restaurant_recommend_menu A
-		<if test="i_user > 0">
-			INNER JOIN t_restaurant B
-			ON A.i_rest = B.i_rest
-			AND B.i_user = #{i_user}
-		</if>
 		WHERE A.i_rest = #{i_rest}
 		<if test="seq > 0">
 			AND A.seq = #{seq}
@@ -110,18 +106,20 @@
 			AND A.seq = #{seq}
 		</if>
 	</delete>
-
+	
 	<delete id="delRestMenu" parameterType="RestPARAM">
-		DELETE FROM t_restaurant_menu
-		WHERE i_rest = #{i_rest}
+		DELETE FROM t_restaurant_menu		
+		WHERE i_rest = #{i_rest}		
 		<if test="seq > 0">
-			and seq = #{seq}
+			AND seq = #{seq}
 		</if>
 	</delete>
+	
 	<delete id="delRest" parameterType="RestPARAM">
 		DELETE FROM t_restaurant
 		WHERE i_rest = #{i_rest}
 		AND i_user = #{i_user}
 	</delete>
-
+	
+	
 </mapper>
